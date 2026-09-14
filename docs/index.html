@@ -48,6 +48,17 @@
       background: rgba(229, 9, 20, 0.2); border: 1px solid var(--primary-red);
       color: #ffb703; padding: 0.2rem 0.65rem; font-size: 0.75rem; font-weight: 700; border-radius: 999px;
     }
+    .badge-author {
+      background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff; padding: 0.2rem 0.75rem; font-size: 0.78rem; font-weight: 700; border-radius: 999px;
+      white-space: nowrap;
+    }
+    .hero-author-banner {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: rgba(229, 9, 20, 0.12); border: 1px solid rgba(229, 9, 20, 0.35);
+      color: #ffb703; padding: 0.35rem 1rem; border-radius: 999px; font-size: 0.88rem; font-weight: 600; margin-bottom: 1.2rem;
+    }
+    .hero-author-banner strong { color: #fff; }
     .nav-links { display: flex; gap: 0.4rem; flex-wrap: wrap; }
     .nav-tab {
       background: transparent; color: var(--text-muted); border: none;
@@ -178,9 +189,10 @@
 <body>
 
   <nav class="navbar">
-    <div style="display: flex; align-items: center; gap: 1rem;">
+    <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
       <a href="#" class="brand-logo">NETFLIX <span>ML Engine</span></a>
       <span class="badge-internship">Auspify Internship Portfolio</span>
+      <span class="badge-author">👨‍💻 Developed by Karan Yadav</span>
     </div>
     <div class="nav-links">
       <button class="nav-tab active" onclick="showTab('tab-overview', this)">🌟 Overview</button>
@@ -194,6 +206,10 @@
 
   <header class="hero-section">
     <div class="hero-banner">
+      <div class="hero-author-banner">
+        <span>👨‍💻 Developer: <strong>Karan Yadav</strong></span> • 
+        <span>Auspify Machine Learning Internship</span>
+      </div>
       <h1 class="hero-title">Netflix Content Intelligence & <span>ML Platform</span></h1>
       <p class="hero-subtitle">
         A complete portfolio featuring content-based recommendation (TF-IDF & Cosine Similarity), supervised classification (Random Forest), unsupervised segmentation (K-Means & PCA), and capstone analytics.
@@ -214,7 +230,7 @@
     <div id="tab-overview" class="tab-pane active">
       <div class="section-header">
         <h2 class="section-title">🌟 Portfolio Summary</h2>
-        <p class="section-subtitle">Execution of Tasks 1, 2, 4, and 6 for the Auspify Machine Learning Internship.</p>
+        <p class="section-subtitle">Execution of Tasks 1, 2, 4, and 6 for the Auspify Machine Learning Internship — Designed & Developed by <strong>Karan Yadav</strong>.</p>
       </div>
       <div class="archetypes-grid">
         <div class="archetype-card" style="border-top-color: #3a86ff;">
@@ -466,7 +482,8 @@
   </main>
 
   <footer class="footer">
-    <p>Auspify Machine Learning Internship Project — Portfolio Web Application.</p>
+    <p>Auspify Machine Learning Internship Project — Designed & Developed by <strong>Karan Yadav</strong>.</p>
+    <p style="margin-top: 0.3rem;">Powered by Python, Scikit-Learn, Pandas & Chart.js.</p>
   </footer>
 
   <script>

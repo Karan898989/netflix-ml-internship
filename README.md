@@ -6,6 +6,11 @@
 [![Pandas](https://img.shields.io/badge/pandas-2.0%2B-navy.svg)](https://pandas.pydata.org/)
 [![Status](https://img.shields.io/badge/Internship-Completed-brightgreen.svg)]()
 
+**Developer:** **Karan Yadav**  
+**Program:** Auspify Machine Learning Internship  
+**Repository:** [https://github.com/Karan898989/netflix-ml-internship](https://github.com/Karan898989/netflix-ml-internship)  
+**Live Application:** [https://karan898989.github.io/netflix-ml-internship/](https://karan898989.github.io/netflix-ml-internship/)  
+
 This repository contains the complete practical implementation of the **4 selected machine learning tasks** for the **Auspify Machine Learning Internship Program**, built on the comprehensive Kaggle **Netflix Movies and TV Shows dataset (8,807 titles)**.
 
 ---
@@ -218,6 +223,6 @@ Simply double-click or open **[`website/index.html`](file:///c:/Users/Karan%20Ya
 - [x] **Single-Command Pipeline**: End-to-end execution verified via `run_all.py` in under 15 seconds.
 
 ---
-
-*Prepared for Auspify Machine Learning Internship evaluation.*  
-*Tag: #Auspify #AuspifyInternship #AuspifyProjects*
+ 
+*Designed & Developed by **Karan Yadav** for the Auspify Machine Learning Internship evaluation.*  
+*Tag: #Auspify #AuspifyInternship #AuspifyProjects #KaranYadav*

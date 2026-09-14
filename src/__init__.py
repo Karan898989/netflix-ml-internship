@@ -1,4 +1,4 @@
 """
 Netflix Machine Learning Internship Package
-Author: Auspify ML Intern
+Author: Karan Yadav
 """

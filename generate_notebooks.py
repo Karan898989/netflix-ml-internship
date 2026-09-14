@@ -16,7 +16,7 @@ def create_task1_notebook():
         nbf.v4.new_markdown_cell("""# Auspify Machine Learning Internship — Task 1
 ## Netflix Content Recommendation System (Content-Based Filtering)
 
-**Author:** Auspify ML Intern  
+**Author:** Karan Yadav (Auspify ML Intern)  
 **Project:** Netflix Movies and TV Shows Portfolio  
 **Technique:** Natural Language Processing (TF-IDF Vectorization) & Cosine Similarity  
 
@@ -94,7 +94,7 @@ def create_task2_notebook():
         nbf.v4.new_markdown_cell("""# Auspify Machine Learning Internship — Task 2
 ## Content Type Prediction Model (Supervised Classification)
 
-**Author:** Auspify ML Intern  
+**Author:** Karan Yadav (Auspify ML Intern)  
 **Project:** Netflix Movies and TV Shows Portfolio  
 **Technique:** Supervised Classification (Logistic Regression, Decision Tree, Random Forest)  
 
@@ -182,7 +182,7 @@ def create_task4_notebook():
         nbf.v4.new_markdown_cell("""# Auspify Machine Learning Internship — Task 4
 ## Netflix Content Segmentation (Unsupervised Learning)
 
-**Author:** Auspify ML Intern  
+**Author:** Karan Yadav (Auspify ML Intern)  
 **Project:** Netflix Movies and TV Shows Portfolio  
 **Technique:** K-Means Clustering, Elbow Method, Silhouette Analysis, Principal Component Analysis (PCA)  
 
@@ -263,7 +263,7 @@ def create_task6_notebook():
         nbf.v4.new_markdown_cell("""# Auspify Machine Learning Internship — Task 6 (Capstone)
 ## Netflix Content Success Analytics Engine & Executive Dashboard
 
-**Author:** Auspify ML Intern  
+**Author:** Karan Yadav (Auspify ML Intern)  
 **Project:** Netflix Movies and TV Shows Portfolio  
 **Technique:** End-to-End Pipeline Integration, Predictive Modeling, Automated Insights & Visual Analytics  
 
