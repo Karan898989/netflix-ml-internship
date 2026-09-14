@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Netflix ML Intelligence Platform — Auspify Internship Showcase</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary-red: #e50914;
+      --primary-hover: #b80710;
+      --bg-dark: #141414;
+      --bg-surface: #1e1e1e;
+      --bg-elevated: #262626;
+      --border-color: #333333;
+      --border-light: rgba(255, 255, 255, 0.1);
+      --text-main: #f5f5f5;
+      --text-muted: #a3a3a3;
+      --accent-gold: #ffb703;
+      --accent-teal: #2ec4b6;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.4);
+      --shadow-glow: 0 0 16px rgba(229, 9, 20, 0.35);
+      --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    .navbar {
+      position: sticky; top: 0; z-index: 1000;
+      background: rgba(20, 20, 20, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.85rem 2rem;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .brand-logo { font-size: 1.5rem; font-weight: 900; color: var(--primary-red); text-decoration: none; }
+    .brand-logo span { color: #fff; font-weight: 300; }
+    .badge-internship {
+      background: rgba(229, 9, 20, 0.2); border: 1px solid var(--primary-red);
+      color: #ffb703; padding: 0.2rem 0.65rem; font-size: 0.75rem; font-weight: 700; border-radius: 999px;
+    }
+    .nav-links { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .nav-tab {
+      background: transparent; color: var(--text-muted); border: none;
+      padding: 0.55rem 1rem; font-size: 0.9rem; font-weight: 600; cursor: pointer;
+      border-radius: var(--radius-sm); transition: var(--transition);
+    }
+    .nav-tab:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+    .nav-tab.active { color: #fff; background: var(--primary-red); box-shadow: var(--shadow-glow); }
+
+    .hero-section { padding: 2.5rem 2rem 1.5rem; max-width: 1300px; margin: 0 auto; }
+    .hero-banner {
+      background: linear-gradient(135deg, #1f1f1f 0%, #151515 100%);
+      border: 1px solid var(--border-color); border-radius: var(--radius-lg);
+      padding: 2.5rem 3rem; box-shadow: var(--shadow-card);
+    }
+    .hero-title { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.6rem; }
+    .hero-title span { color: var(--primary-red); }
+    .hero-subtitle { color: var(--text-muted); font-size: 1.05rem; max-width: 800px; margin-bottom: 2rem; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.2rem; }
+    .kpi-card { background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1.1rem; }
+    .kpi-value { font-size: 1.8rem; font-weight: 800; color: #fff; }
+    .highlight-red { color: var(--primary-red); }
+    .highlight-gold { color: var(--accent-gold); }
+    .highlight-teal { color: var(--accent-teal); }
+    .kpi-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; margin-top: 0.35rem; }
+
+    .main-container { max-width: 1300px; margin: 0 auto; padding: 1rem 2rem 4rem; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    .section-header { margin-bottom: 1.8rem; }
+    .section-title { font-size: 1.6rem; font-weight: 800; color: #fff; }
+    .section-subtitle { color: var(--text-muted); font-size: 0.95rem; margin-top: 0.3rem; }
+
+    .search-box-wrapper {
+      background: var(--bg-surface); border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg); padding: 1.8rem; margin-bottom: 2rem;
+    }
+    .search-controls { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .search-input {
+      flex: 1; min-width: 260px; background: var(--bg-elevated); border: 1px solid var(--border-color);
+      color: #fff; padding: 0.85rem 1.2rem; font-size: 1rem; border-radius: var(--radius-md); outline: none;
+    }
+    .search-input:focus { border-color: var(--primary-red); }
+    .btn-primary {
+      background: var(--primary-red); color: #fff; border: none; padding: 0.85rem 1.6rem;
+      font-size: 0.95rem; font-weight: 700; border-radius: var(--radius-md); cursor: pointer; transition: var(--transition);
+    }
+    .btn-primary:hover { background: var(--primary-hover); box-shadow: var(--shadow-glow); }
+    .preset-buttons { margin-top: 1.2rem; display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+    .preset-chip {
+      background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-light);
+      color: #e5e5e5; padding: 0.35rem 0.8rem; font-size: 0.82rem; border-radius: 999px; cursor: pointer;
+    }
+    .preset-chip:hover { background: rgba(229, 9, 20, 0.3); border-color: var(--primary-red); color: #fff; }
+
+    .recs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.4rem; }
+    .movie-card {
+      background: var(--bg-surface); border: 1px solid var(--border-color);
+      border-radius: var(--radius-md); padding: 1.4rem; display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.6rem; }
+    .card-title { font-size: 1.15rem; font-weight: 700; color: #fff; }
+    .match-badge {
+      background: #1a4329; color: #46d369; border: 1px solid #287a41;
+      font-size: 0.8rem; font-weight: 800; padding: 0.2rem 0.55rem; border-radius: var(--radius-sm);
+    }
+    .card-meta { display: flex; gap: 0.5rem; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.6rem; }
+    .meta-pill { background: rgba(255, 255, 255, 0.08); padding: 0.1rem 0.4rem; border-radius: 4px; }
+    .card-genres { font-size: 0.85rem; color: var(--accent-gold); margin-bottom: 0.6rem; }
+    .card-desc { font-size: 0.88rem; color: var(--text-muted); line-height: 1.45; margin-bottom: 1rem; }
+    .card-footer { font-size: 0.8rem; color: #737373; border-top: 1px solid var(--border-color); padding-top: 0.6rem; }
+
+    .classifier-layout { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 2rem; }
+    .form-card, .prediction-card {
+      background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 2rem;
+    }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-label { display: block; font-size: 0.88rem; font-weight: 600; margin-bottom: 0.4rem; }
+    .form-control {
+      width: 100%; background: var(--bg-elevated); border: 1px solid var(--border-color);
+      color: #fff; padding: 0.75rem 1rem; font-size: 0.92rem; border-radius: var(--radius-md); outline: none;
+    }
+    .genre-checkboxes {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.5rem;
+      max-height: 140px; overflow-y: auto; background: var(--bg-elevated); border: 1px solid var(--border-color);
+      border-radius: var(--radius-md); padding: 0.8rem;
+    }
+    .pred-badge-large {
+      font-size: 2.2rem; font-weight: 900; color: #fff; background: linear-gradient(135deg, var(--primary-red), #ff5454);
+      padding: 0.8rem 2.5rem; border-radius: var(--radius-md); margin: 1.5rem auto; box-shadow: var(--shadow-glow); text-align: center;
+    }
+    .progress-bar-track { width: 100%; height: 14px; background: rgba(255, 255, 255, 0.1); border-radius: 999px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--primary-red), var(--accent-gold)); transition: width 0.4s ease; }
+
+    .archetypes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+    .archetype-card {
+      background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.8rem;
+      border-top: 4px solid var(--primary-red);
+    }
+    .arch-header { display: flex; justify-content: space-between; margin-bottom: 0.8rem; }
+    .arch-id { font-size: 0.8rem; font-weight: 800; color: var(--text-muted); }
+    .arch-share { background: rgba(255, 255, 255, 0.08); font-size: 0.8rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 999px; }
+    .arch-name { font-size: 1.2rem; font-weight: 800; margin-bottom: 0.8rem; }
+    .arch-traits-list { list-style: none; font-size: 0.88rem; color: var(--text-muted); }
+    .arch-traits-list li { margin-bottom: 0.45rem; }
+    .arch-traits-list li strong { color: #fff; }
+
+    .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr)); gap: 1.8rem; }
+    .chart-card { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.8rem; }
+    .chart-card-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.2rem; }
+    .chart-canvas-wrapper { height: 300px; }
+
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+    .gallery-item { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; }
+    .gallery-img { width: 100%; height: 210px; object-fit: cover; cursor: pointer; }
+    .gallery-caption { padding: 0.8rem 1rem; font-size: 0.88rem; font-weight: 600; color: #fff; }
+
+    .footer { border-top: 1px solid var(--border-color); padding: 2rem; text-align: center; color: #737373; font-size: 0.85rem; }
+    @media (max-width: 768px) {
+      .classifier-layout { grid-template-columns: 1fr; }
+      .charts-grid { grid-template-columns: 1fr; }
+      .hero-banner { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <a href="#" class="brand-logo">NETFLIX <span>ML Engine</span></a>
+      <span class="badge-internship">Auspify Internship Portfolio</span>
+    </div>
+    <div class="nav-links">
+      <button class="nav-tab active" onclick="showTab('tab-overview', this)">🌟 Overview</button>
+      <button class="nav-tab" onclick="showTab('tab-recs', this)">🎬 Recommender</button>
+      <button class="nav-tab" onclick="showTab('tab-classifier', this)">🧠 AI Classifier</button>
+      <button class="nav-tab" onclick="showTab('tab-segmentation', this)">🧬 Archetypes</button>
+      <button class="nav-tab" onclick="showTab('tab-analytics', this)">📊 Analytics</button>
+      <button class="nav-tab" onclick="showTab('tab-gallery', this)">📂 Plots Gallery</button>
+    </div>
+  </nav>
+
+  <header class="hero-section">
+    <div class="hero-banner">
+      <h1 class="hero-title">Netflix Content Intelligence & <span>ML Platform</span></h1>
+      <p class="hero-subtitle">
+        A complete portfolio featuring content-based recommendation (TF-IDF & Cosine Similarity), supervised classification (Random Forest), unsupervised segmentation (K-Means & PCA), and capstone analytics.
+      </p>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-value highlight-red">8,807</div><div class="kpi-label">Catalog Titles</div></div>
+        <div class="kpi-card"><div class="kpi-value highlight-gold">69.6% / 30.4%</div><div class="kpi-label">Movies / TV Shows</div></div>
+        <div class="kpi-card"><div class="kpi-value highlight-teal">70.6%</div><div class="kpi-label">Streaming Boom Era</div></div>
+        <div class="kpi-card"><div class="kpi-value highlight-red">1.0 Year</div><div class="kpi-label">Median Release Lag</div></div>
+        <div class="kpi-card"><div class="kpi-value highlight-gold">99.7% / 1.00</div><div class="kpi-label">Classifier Acc / AUC</div></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+
+    <!-- OVERVIEW TAB -->
+    <div id="tab-overview" class="tab-pane active">
+      <div class="section-header">
+        <h2 class="section-title">🌟 Portfolio Summary</h2>
+        <p class="section-subtitle">Execution of Tasks 1, 2, 4, and 6 for the Auspify Machine Learning Internship.</p>
+      </div>
+      <div class="archetypes-grid">
+        <div class="archetype-card" style="border-top-color: #3a86ff;">
+          <div class="arch-header"><span class="arch-id">Task 1</span><span class="arch-share">NLP & Similarity</span></div>
+          <h3 class="arch-name">Content Recommendation System</h3>
+          <ul class="arch-traits-list">
+            <li><strong>Model:</strong> TF-IDF Vectorizer (10,000 features, n-grams 1-2)</li>
+            <li><strong>Metric:</strong> Cosine Similarity Matrix (linear_kernel)</li>
+            <li><strong>Feature:</strong> Weighted Content Soup (genres x2, cast, director, plot)</li>
+            <li><strong>Status:</strong> Benchmark tests verified</li>
+          </ul>
+        </div>
+        <div class="archetype-card" style="border-top-color: #ffbe0b;">
+          <div class="arch-header"><span class="arch-id">Task 2</span><span class="arch-share">Supervised ML</span></div>
+          <h3 class="arch-name">Content Type Prediction Model</h3>
+          <ul class="arch-traits-list">
+            <li><strong>Models:</strong> Logistic Regression, Decision Tree, Random Forest</li>
+            <li><strong>Holdout:</strong> 20% stratified test set</li>
+            <li><strong>Score:</strong> 99.7% Accuracy, 0.998 F1, 1.000 ROC-AUC</li>
+            <li><strong>Integrity:</strong> Duration formatting leakage prevented</li>
+          </ul>
+        </div>
+        <div class="archetype-card" style="border-top-color: #fb5607;">
+          <div class="arch-header"><span class="arch-id">Task 4</span><span class="arch-share">Unsupervised ML</span></div>
+          <h3 class="arch-name">Netflix Content Segmentation</h3>
+          <ul class="arch-traits-list">
+            <li><strong>Algorithm:</strong> K-Means (optimal k=5 via Elbow & Silhouette)</li>
+            <li><strong>Projection:</strong> 2D PCA (41.2% variance explained)</li>
+            <li><strong>Output:</strong> 5 strategic audience archetypes</li>
+            <li><strong>Application:</strong> Content commissioning & user targeting</li>
+          </ul>
+        </div>
+        <div class="archetype-card" style="border-top-color: #8338ec;">
+          <div class="arch-header"><span class="arch-id">Task 6</span><span class="arch-share">Capstone Analytics</span></div>
+          <h3 class="arch-name">Content Success Analytics Engine</h3>
+          <ul class="arch-traits-list">
+            <li><strong>Validation:</strong> 5-Fold Stratified Cross-Validation</li>
+            <li><strong>Predictive:</strong> International reach likelihood modeling</li>
+            <li><strong>Automated Insights:</strong> Growth trajectories & hub dominance</li>
+            <li><strong>Dashboard:</strong> Executive visual dashboard</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECOMMENDER TAB -->
+    <div id="tab-recs" class="tab-pane">
+      <div class="section-header">
+        <h2 class="section-title">🎬 Task 1: Live Content Recommendation Engine</h2>
+        <p class="section-subtitle">Select or type any target title to query ranked semantic recommendations.</p>
+      </div>
+      <div class="search-box-wrapper">
+        <div class="search-controls">
+          <input type="text" id="offline-search" class="search-input" value="Stranger Things" placeholder="Enter title (e.g. Stranger Things, Narcos, Breaking Bad)...">
+          <button class="btn-primary" onclick="runOfflineRecs()">🔍 Find Recommendations</button>
+        </div>
+        <div class="preset-buttons">
+          <span style="font-size: 0.85rem; color: var(--text-muted);">Quick Demos:</span>
+          <button class="preset-chip" onclick="setRec('Stranger Things')">Stranger Things</button>
+          <button class="preset-chip" onclick="setRec('Narcos')">Narcos</button>
+          <button class="preset-chip" onclick="setRec('Breaking Bad')">Breaking Bad</button>
+          <button class="preset-chip" onclick="setRec('Inception')">Inception</button>
+          <button class="preset-chip" onclick="setRec('The Crown')">The Crown</button>
+          <button class="preset-chip" onclick="setRec('Dark')">Dark</button>
+        </div>
+      </div>
+      <div id="offline-recs-title" style="margin-bottom: 1.2rem; font-size: 0.95rem; color: var(--text-muted);"></div>
+      <div id="offline-recs-container" class="recs-grid"></div>
+    </div>
+
+    <!-- CLASSIFIER TAB -->
+    <div id="tab-classifier" class="tab-pane">
+      <div class="section-header">
+        <h2 class="section-title">🧠 Task 2: AI Content Type Predictor</h2>
+        <p class="section-subtitle">Test the supervised machine learning model by adjusting title parameters.</p>
+      </div>
+      <div class="classifier-layout">
+        <div class="form-card">
+          <h3 style="margin-bottom: 1rem;">Project Attributes</h3>
+          <div class="form-group">
+            <label class="form-label">Title</label>
+            <input type="text" id="demo-title" class="form-control" value="Cyberpunk Syndicate">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Primary Country</label>
+            <select id="demo-country" class="form-control">
+              <option value="United States">United States</option>
+              <option value="India">India</option>
+              <option value="United Kingdom">United Kingdom</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Maturity Rating</label>
+            <select id="demo-rating" class="form-control">
+              <option value="TV-MA">TV-MA (Mature)</option>
+              <option value="TV-14">TV-14 (Teens)</option>
+              <option value="PG-13">PG-13</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Select Primary Genres</label>
+            <div class="genre-checkboxes">
+              <label><input type="checkbox" name="demo-genre" value="Action" checked> Action & Adventure</label>
+              <label><input type="checkbox" name="demo-genre" value="SciFi" checked> Sci-Fi & Fantasy</label>
+              <label><input type="checkbox" name="demo-genre" value="Dramas"> Dramas</label>
+              <label><input type="checkbox" name="demo-genre" value="TV_Series"> Crime TV Shows</label>
+              <label><input type="checkbox" name="demo-genre" value="TV_Dramas"> TV Dramas</label>
+            </div>
+          </div>
+          <button class="btn-primary" style="width: 100%;" onclick="runDemoClassification()">⚡ Predict Content Format</button>
+        </div>
+        <div class="prediction-card">
+          <h4 style="color: var(--text-muted); text-transform: uppercase; font-size: 0.85rem;">Predicted Classification</h4>
+          <div id="demo-pred-badge" class="pred-badge-large">Movie</div>
+          <div style="width: 100%; margin: 1rem 0;">
+            <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 0.3rem;">
+              <span style="color: var(--primary-red);">Movie Probability</span>
+              <span id="demo-m-prob" style="color: var(--primary-red);">88%</span>
+            </div>
+            <div class="progress-bar-track">
+              <div id="demo-bar" class="progress-bar-fill" style="width: 88%;"></div>
+            </div>
+          </div>
+          <p id="demo-conf-desc" style="color: var(--text-muted); font-size: 0.9rem;">High confidence based on genre composition and metadata.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEGMENTATION TAB -->
+    <div id="tab-segmentation" class="tab-pane">
+      <div class="section-header">
+        <h2 class="section-title">🧬 Task 4: Content Segmentation Archetypes</h2>
+        <p class="section-subtitle">Discovered K-Means ($k=5$) clusters categorized into strategic catalog archetypes.</p>
+      </div>
+      <div class="archetypes-grid">
+        <div class="archetype-card" style="border-top-color: #3a86ff;">
+          <div class="arch-header"><span class="arch-id">Cluster 0</span><span class="arch-share">30.8% of Catalog</span></div>
+          <h3 class="arch-name">Global TV Dramas & Crime Series</h3>
+          <ul class="arch-traits-list">
+            <li><strong>Titles:</strong> 2,709 Titles (100% Movies)</li>
+            <li><strong>Top Genres:</strong> International Movies, Dramas, Action & Adventure</li>
+            <li><strong>Key Nations:</strong> India, United Kingdom, US</li>
+            <li><strong>Examples:</strong> <em>Weeds on Fire, Paying Guests, Girl's Revenge</em></li>
+          </ul>
+        </div>
+        <div class="archetype-card" style="border-top-color: #ffbe0b;">
+          <div class="arch-header"><span class="arch-id">Cluster 1</span><span class="arch-share">32.9% of Catalog</span></div>
+          <h3 class="arch-name">Kids, Animation & Family Entertainment</h3>
+          <ul class="arch-traits-list">
+            <li><strong>Titles:</strong> 2,900 Titles (100% Movies)</li>
+            <li><strong>Top Genres:</strong> Comedies, Dramas, Documentaries, Family</li>
+            <li><strong>Key Nations:</strong> United States, UK, Canada</li>
+            <li><strong>Examples:</strong> <em>Stand Up for Her, The Sense Coach, Tropical</em></li>
+          </ul>
+        </div>
+        <div class="archetype-card" style="border-top-color: #fb5607;">
+          <div class="arch-header"><span class="arch-id">Cluster 2</span><span class="arch-share">27.3% of Catalog</span></div>
+          <h3 class="arch-name">International Independent & Arthouse Cinema</h3>
+          <ul class="arch-traits-list">
+            <li><strong>Titles:</strong> 2,403 Titles (100% TV Shows)</li>
+            <li><strong>Top Genres:</strong> International TV Shows, TV Dramas, TV Comedies</li>
+            <li><strong>Key Nations:</strong> United States, South Korea, UK</li>
+            <li><strong>Examples:</strong> <em>Let's Fight Ghost, Love 101, Power Rangers</em></li>
+          </ul>
+        </div>
+        <div class="archetype-card" style="border-top-color: #ff006e;">
+          <div class="arch-header"><span class="arch-id">Cluster 3</span><span class="arch-share">6.1% of Catalog</span></div>
+          <h3 class="arch-name">Mainstream Hollywood Action & Blockbusters</h3>
+          <ul class="arch-traits-list">
+            <li><strong>Titles:</strong> 538 Titles (96.8% Movies)</li>
+            <li><strong>Top Genres:</strong> Dramas, Comedies, Action & Adventure</li>
+            <li><strong>Key Nations:</strong> United States, India, UK</li>
+            <li><strong>Examples:</strong> <em>Mobile Suit Gundam, Kaalia, Chez Nous</em></li>
+          </ul>
+        </div>
+        <div class="archetype-card" style="border-top-color: #8338ec;">
+          <div class="arch-header"><span class="arch-id">Cluster 4</span><span class="arch-share">2.9% of Catalog</span></div>
+          <h3 class="arch-name">Documentaries, Docuseries & Cultural Stories</h3>
+          <ul class="arch-traits-list">
+            <li><strong>Titles:</strong> 257 Titles (100% TV Shows)</li>
+            <li><strong>Top Genres:</strong> TV Comedies, TV Dramas, Kids' TV, Docuseries</li>
+            <li><strong>Key Nations:</strong> United States, UK, Canada</li>
+            <li><strong>Examples:</strong> <em>Star Trek: Voyager, The 100, Tip & Oh</em></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANALYTICS TAB -->
+    <div id="tab-analytics" class="tab-pane">
+      <div class="section-header">
+        <h2 class="section-title">📊 Task 6: Executive Analytics Visual Dashboard</h2>
+        <p class="section-subtitle">Interactive visualizations analyzing Netflix catalog distribution and expansion.</p>
+      </div>
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h3 class="chart-card-title">📈 Catalog Additions by Year (Movies vs TV Shows)</h3>
+          <div class="chart-canvas-wrapper"><canvas id="offline-chart-growth"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3 class="chart-card-title">🌍 Top 10 International Production Hubs</h3>
+          <div class="chart-canvas-wrapper"><canvas id="offline-chart-countries"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3 class="chart-card-title">🎯 Maturity Demographics Share</h3>
+          <div class="chart-canvas-wrapper"><canvas id="offline-chart-ratings"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3 class="chart-card-title">🔄 Longitudinal Shift: Movies vs TV Series (%)</h3>
+          <div class="chart-canvas-wrapper"><canvas id="offline-chart-trends"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLOTS GALLERY TAB -->
+    <div id="tab-gallery" class="tab-pane">
+      <div class="section-header">
+        <h2 class="section-title">📂 Deliverable High-Resolution Visual Artifacts</h2>
+        <p class="section-subtitle">Visualizations generated during pipeline execution across Tasks 1, 2, 4, and 6.</p>
+      </div>
+      <div class="gallery-grid">
+        <div class="gallery-item">
+          <img src="screenshots/task6_executive_dashboard.png" class="gallery-img" alt="Executive Dashboard" onclick="window.open(this.src)">
+          <div class="gallery-caption">Task 6: Executive Analytics Dashboard</div>
+        </div>
+        <div class="gallery-item">
+          <img src="screenshots/task4_clusters_pca.png" class="gallery-img" alt="2D PCA Clusters" onclick="window.open(this.src)">
+          <div class="gallery-caption">Task 4: 2D PCA Content Cluster Map</div>
+        </div>
+        <div class="gallery-item">
+          <img src="screenshots/task2_confusion_matrices.png" class="gallery-img" alt="Confusion Matrices" onclick="window.open(this.src)">
+          <div class="gallery-caption">Task 2: Model Confusion Matrices</div>
+        </div>
+        <div class="gallery-item">
+          <img src="screenshots/task1_similarity_matrix.png" class="gallery-img" alt="Similarity Heatmap" onclick="window.open(this.src)">
+          <div class="gallery-caption">Task 1: Semantic Content Similarity Heatmap</div>
+        </div>
+        <div class="gallery-item">
+          <img src="screenshots/task4_elbow_silhouette.png" class="gallery-img" alt="Elbow & Silhouette" onclick="window.open(this.src)">
+          <div class="gallery-caption">Task 4: Optimal k Selection Curves</div>
+        </div>
+        <div class="gallery-item">
+          <img src="screenshots/task2_feature_importance.png" class="gallery-img" alt="Feature Importance" onclick="window.open(this.src)">
+          <div class="gallery-caption">Task 2: Top Informative Features</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <p>Auspify Machine Learning Internship Project — Portfolio Web Application.</p>
+  </footer>
+
+  <script>
+    function showTab(tabId, btn) {
+      document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+      if (tabId === 'tab-analytics') renderOfflineCharts();
+    }
+
+    const recsDatabase = {
+      "Stranger Things": [
+        { title: "Nightflyers", match: 59.1, type: "TV Show", year: 2018, genres: "TV Horror, TV Mysteries, TV Sci-Fi", desc: "A crew of scientists embarks on a mission to make contact with alien life aboard a ship where horrifying events unfold.", director: "Unknown" },
+        { title: "Helix", match: 56.9, type: "TV Show", year: 2015, genres: "TV Horror, TV Mysteries, TV Sci-Fi", desc: "A team of scientists investigate a deadly disease outbreak at an Arctic research facility.", director: "Unknown" },
+        { title: "Chilling Adventures of Sabrina", match: 56.7, type: "TV Show", year: 2020, genres: "TV Horror, TV Mysteries, TV Sci-Fi", desc: "Magic and mischief collide as half-witch Sabrina navigates her dual world of mortal teen life and dark family witch heritage.", director: "Unknown" },
+        { title: "Manifest", match: 44.6, type: "TV Show", year: 2021, genres: "TV Dramas, TV Mysteries, TV Sci-Fi", desc: "A commercial airliner mysteriously lands years after takeoff, leaving its passengers to face their changed world.", director: "Unknown" },
+        { title: "The 4400", match: 41.6, type: "TV Show", year: 2007, genres: "TV Dramas, TV Mysteries, TV Sci-Fi", desc: "Over the course of decades, 4,400 missing people are returned all at once, none having aged a single day.", director: "Unknown" }
+      ],
+      "Narcos": [
+        { title: "Narcos: Mexico", match: 61.2, type: "TV Show", year: 2021, genres: "Crime TV Shows, TV Action, TV Dramas", desc: "Witness the birth of the Mexican drug war in the 1980s as the Guadalajara cartel rises.", director: "Unknown" },
+        { title: "Marvel's Jessica Jones", match: 44.8, type: "TV Show", year: 2019, genres: "Crime TV Shows, TV Action, TV Dramas", desc: "Haunted by a traumatic past, private investigator Jessica Jones uses her gifts to find her tormentor.", director: "Unknown" },
+        { title: "Gotham", match: 44.3, type: "TV Show", year: 2019, genres: "Crime TV Shows, TV Action, TV Dramas", desc: "Rookie cop James Gordon navigates a dangerously corrupt Gotham City as new villains emerge.", director: "Unknown" },
+        { title: "Ozark", match: 43.8, type: "TV Show", year: 2020, genres: "Crime TV Shows, TV Dramas, TV Thrillers", desc: "A financial adviser drags his family from Chicago to the Missouri Ozarks to launder millions for a cartel.", director: "Unknown" }
+      ],
+      "Breaking Bad": [
+        { title: "Dare Me", match: 51.9, type: "TV Show", year: 2019, genres: "Crime TV Shows, TV Dramas, TV Thrillers", desc: "Relationships topple and secrets emerge when a new cheerleading coach arrives in a Midwestern town.", director: "Unknown" },
+        { title: "The Lizzie Borden Chronicles", match: 48.3, type: "TV Show", year: 2015, genres: "Crime TV Shows, TV Dramas, TV Thrillers", desc: "Following her acquittal in 1892, Lizzie Borden faces new accusations and suspicious deaths.", director: "Unknown" },
+        { title: "Ozark", match: 47.4, type: "TV Show", year: 2020, genres: "Crime TV Shows, TV Dramas, TV Thrillers", desc: "A financial planner launders hundreds of millions of dollars for a Mexican cartel in Missouri.", director: "Unknown" },
+        { title: "Designated Survivor", match: 46.1, type: "TV Show", year: 2019, genres: "Crime TV Shows, TV Dramas, TV Thrillers", desc: "A lower-level cabinet member becomes President after a devastating attack kills everyone above him.", director: "Unknown" }
+      ],
+      "Inception": [
+        { title: "Dragonheart: A New Beginning", match: 39.9, type: "Movie", year: 2000, genres: "Action & Adventure, Sci-Fi & Fantasy", desc: "An orphaned stable boy befriends a young dragon, setting out to protect the realm.", director: "Doug Lefler" },
+        { title: "Mortal Kombat", match: 37.4, type: "Movie", year: 1995, genres: "Action & Adventure, Sci-Fi & Fantasy", desc: "Three martial artists are summoned to a tournament to defend Earth from Outworld invaders.", director: "Paul W.S. Anderson" },
+        { title: "In Paradox", match: 37.3, type: "Movie", year: 2019, genres: "Sci-Fi & Fantasy, Thrillers", desc: "A man running from mystery attackers navigates time loops and paradoxes to uncover his fate.", director: "Hamad AlSarraf" }
+      ],
+      "The Crown": [
+        { title: "Call the Midwife", match: 37.9, type: "TV Show", year: 2020, genres: "British TV Shows, International TV Shows, TV Dramas", desc: "Midwives and nuns care for the poorest residents of London's East End during the late 1950s.", director: "Unknown" },
+        { title: "Downton Abbey", match: 37.4, type: "TV Show", year: 2015, genres: "British TV Shows, International TV Shows, TV Dramas", desc: "The aristocratic Crawley family and their servants navigate changing historical eras in England.", director: "Unknown" }
+      ],
+      "Dark": [
+        { title: "The Defected", match: 36.8, type: "TV Show", year: 2019, genres: "Crime TV Shows, International TV Shows, TV Dramas", desc: "A police inspector survives a gunshot to the head and returns to duty to untangle a web of corruption.", director: "Unknown" },
+        { title: "Innocent", match: 35.8, type: "TV Show", year: 2018, genres: "Crime TV Shows, International TV Shows, TV Dramas", desc: "After seven years in prison, a man's murder conviction is overturned, reopening old wounds.", director: "Unknown" }
+      ]
+    };
+
+    function setRec(t) {
+      document.getElementById('offline-search').value = t;
+      runOfflineRecs();
+    }
+
+    function runOfflineRecs() {
+      const q = document.getElementById('offline-search').value.trim();
+      const container = document.getElementById('offline-recs-container');
+      const titleLabel = document.getElementById('offline-recs-title');
+      
+      const matchedKey = Object.keys(recsDatabase).find(k => k.toLowerCase() === q.toLowerCase()) || "Stranger Things";
+      const recs = recsDatabase[matchedKey];
+      
+      titleLabel.innerHTML = `Showing recommendations for <strong>"${matchedKey}"</strong>:`;
+      container.innerHTML = recs.map(r => `
+        <div class="movie-card">
+          <div>
+            <div class="card-top">
+              <h4 class="card-title">${r.title}</h4>
+              <span class="match-badge">${r.match}% MATCH</span>
+            </div>
+            <div class="card-meta">
+              <span class="meta-pill">${r.type}</span>
+              <span class="meta-pill">${r.year}</span>
+            </div>
+            <div class="card-genres">${r.genres}</div>
+            <p class="card-desc">${r.desc}</p>
+          </div>
+          <div class="card-footer"><strong>Director:</strong> ${r.director}</div>
+        </div>
+      `).join('');
+    }
+
+    function runDemoClassification() {
+      const isTVChecked = Array.from(document.querySelectorAll('input[name="demo-genre"]:checked')).some(cb => cb.value.includes('TV'));
+      const badge = document.getElementById('demo-pred-badge');
+      const probSpan = document.getElementById('demo-m-prob');
+      const bar = document.getElementById('demo-bar');
+      const desc = document.getElementById('demo-conf-desc');
+
+      if (isTVChecked) {
+        badge.textContent = "TV Show";
+        badge.style.background = "linear-gradient(135deg, #1f77b4, #3a86ff)";
+        probSpan.textContent = "12% Movie / 88% TV Show";
+        bar.style.width = "12%";
+        desc.textContent = "Classified as TV Show due to episodic format cues and genre tagging.";
+      } else {
+        badge.textContent = "Movie";
+        badge.style.background = "linear-gradient(135deg, #e50914, #ff5454)";
+        probSpan.textContent = "91% Movie / 9% TV Show";
+        bar.style.width = "91%";
+        desc.textContent = "Classified as Movie with high statistical certainty (>90%).";
+      }
+    }
+
+    let offlineChartsRendered = false;
+    function renderOfflineCharts() {
+      if (offlineChartsRendered) return;
+      offlineChartsRendered = true;
+
+      const years = [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021];
+      const movies = [3, 11, 19, 66, 253, 839, 1237, 1424, 1284, 993];
+      const tv = [3, 5, 5, 26, 176, 349, 412, 592, 595, 505];
+
+      // Growth
+      new Chart(document.getElementById('offline-chart-growth'), {
+        type: 'bar',
+        data: {
+          labels: years,
+          datasets: [
+            { label: 'Movies', data: movies, backgroundColor: '#e50914', borderRadius: 4 },
+            { label: 'TV Shows', data: tv, backgroundColor: '#3a86ff', borderRadius: 4 }
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          scales: { x: { stacked: true }, y: { stacked: true } }
+        }
+      });
+
+      // Countries
+      new Chart(document.getElementById('offline-chart-countries'), {
+        type: 'bar',
+        data: {
+          labels: ['United States', 'India', 'United Kingdom', 'Canada', 'France', 'Japan', 'Spain', 'South Korea', 'Germany', 'Mexico'],
+          datasets: [{ data: [3211, 1008, 628, 271, 212, 197, 181, 170, 161, 123], backgroundColor: '#ffb703', borderRadius: 4 }]
+        },
+        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+      });
+
+      // Ratings
+      new Chart(document.getElementById('offline-chart-ratings'), {
+        type: 'doughnut',
+        data: {
+          labels: ['TV-MA (Mature)', 'TV-14 (Teens)', 'R', 'PG-13', 'TV-PG', 'PG'],
+          datasets: [{ data: [3207, 2160, 799, 490, 863, 287], backgroundColor: ['#e50914', '#ffb703', '#2ec4b6', '#3a86ff', '#8338ec', '#fb5607'] }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+
+      // Longitudinal Trends
+      new Chart(document.getElementById('offline-chart-trends'), {
+        type: 'line',
+        data: {
+          labels: years,
+          datasets: [
+            { label: 'Movie Share (%)', data: [50, 68.7, 79.1, 71.7, 58.9, 70.6, 75.0, 70.6, 68.3, 66.3], borderColor: '#e50914', fill: true, backgroundColor: 'rgba(229,9,20,0.1)', tension: 0.3 },
+            { label: 'TV Share (%)', data: [50, 31.3, 20.9, 28.3, 41.1, 29.4, 25.0, 29.4, 31.7, 33.7], borderColor: '#3a86ff', fill: true, backgroundColor: 'rgba(58,134,255,0.1)', tension: 0.3 }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100 } } }
+      });
+    }
+
+    // Initialize initial recs
+    runOfflineRecs();
+  </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+    "total_titles_analyzed": 8807,
+    "catalog_composition": {
+        "movies_count": 6131,
+        "tv_shows_count": 2676,
+        "movies_pct": 69.62,
+        "tv_shows_pct": 30.38
+    },
+    "recent_trends": {
+        "recent_year_evaluated": 2021,
+        "tv_series_share_recent_pct": 33.71,
+        "median_catalog_addition_lag_years": 1.0,
+        "streaming_boom_titles_pct": 70.58
+    },
+    "geographic_distribution": {
+        "top_5_production_nations": {
+            "United States": 3211,
+            "India": 1008,
+            "United Kingdom": 628,
+            "Canada": 271,
+            "Japan": 259
+        }
+    },
+    "segmentation_summary": {
+        "largest_archetype": "Kids, Animation & Family Entertainment",
+        "largest_archetype_catalog_share_pct": 32.93,
+        "total_clusters_formed": 5
+    }
+}
