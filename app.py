@@ -121,7 +121,10 @@ def get_titles():
 def recommend():
     """Returns top-N content recommendations for a given title."""
     title = request.args.get('title', '').strip()
-    top_n = int(request.args.get('top_n', 6))
+    try:
+        top_n = int(request.args.get('top_n', 6))
+    except (ValueError, TypeError):
+        top_n = 6
     filter_type = request.args.get('type', None)
     if filter_type in ['All', '']:
         filter_type = None
@@ -131,7 +134,7 @@ def recommend():
 
     recs_df = DATA['recommender'].get_recommendations(title, top_n=top_n, filter_type=filter_type)
     if recs_df.empty:
-        return jsonify({'error': f"Title '{title}' not found in catalog.", 'results': []}), 404
+        return jsonify({'error': f"Title '{title}' not found in catalog.", 'recommendations': []}), 404
 
     # Convert to records dictionary
     results = recs_df.to_dict(orient='records')
@@ -145,62 +148,81 @@ def recommend():
 @app.route('/api/predict', methods=['POST'])
 def predict():
     """Performs live content type prediction for custom metadata inputs."""
-    payload = request.get_json() or {}
-    genres = payload.get('genres', ['Dramas'])
-    country = payload.get('country', 'United States')
-    rating = payload.get('rating', 'TV-MA')
-    release_year = float(payload.get('release_year', 2021))
-    description = payload.get('description', '')
+    try:
+        payload = request.get_json() or {}
+        genres = payload.get('genres', ['Dramas'])
+        # Ensure genres is always a list (handle string input)
+        if isinstance(genres, str):
+            genres = [genres]
+        country = payload.get('country', 'United States')
+        rating = payload.get('rating', 'TV-MA')
+        try:
+            release_year = float(payload.get('release_year', 2021))
+        except (ValueError, TypeError):
+            release_year = 2021.0
+        description = str(payload.get('description', ''))
 
-    # Prepare single-row feature dictionary matching training schema exactly
-    classifier = DATA['classifier']
-    row_dict = {col: 0.0 for col in classifier.feature_names}
+        # Prepare single-row feature dictionary matching training schema exactly
+        classifier = DATA['classifier']
+        row_dict = {col: 0.0 for col in classifier.feature_names}
 
-    # 1. Multi-label genres
-    for g in genres:
-        key = f"genre_{g.replace(' ', '_').lower()}"
-        if key in row_dict:
-            row_dict[key] = 1.0
+        # 1. Multi-label genres
+        for g in genres:
+            key = f"genre_{g.replace(' ', '_').lower()}"
+            if key in row_dict:
+                row_dict[key] = 1.0
 
-    # 2. Country one-hot
-    country_key = f"country_{country}"
-    if country_key in row_dict:
-        row_dict[country_key] = 1.0
-    elif 'country_Other_Country' in row_dict:
-        row_dict['country_Other_Country'] = 1.0
+        # 2. Country one-hot
+        country_key = f"country_{country}"
+        if country_key in row_dict:
+            row_dict[country_key] = 1.0
+        elif 'country_Other_Country' in row_dict:
+            row_dict['country_Other_Country'] = 1.0
 
-    # 3. Rating one-hot
-    rating_key = f"rating_{rating}"
-    if rating_key in row_dict:
-        row_dict[rating_key] = 1.0
-    elif 'rating_Other_Rating' in row_dict:
-        row_dict['rating_Other_Rating'] = 1.0
+        # 3. Rating one-hot
+        rating_key = f"rating_{rating}"
+        if rating_key in row_dict:
+            row_dict[rating_key] = 1.0
+        elif 'rating_Other_Rating' in row_dict:
+            row_dict['rating_Other_Rating'] = 1.0
 
-    # 4. Scaled year
-    row_dict['scaled_release_year'] = (release_year - 2014.18) / 8.82
+        # 4. Scaled year — use actual training data statistics instead of hardcoded values
+        train_years = DATA['df']['release_year']
+        year_mean = train_years.mean()
+        year_std = train_years.std()
+        if year_std == 0:
+            year_std = 1.0
+        row_dict['scaled_release_year'] = (release_year - year_mean) / year_std
 
-    # 5. TF-IDF synopsis words
-    desc_words = set(description.lower().split())
-    for word in desc_words:
-        w_key = f"tfidf_{word}"
-        if w_key in row_dict:
-            row_dict[w_key] = 1.0
+        # 5. TF-IDF synopsis words — strip punctuation for better matching
+        import re as _re
+        desc_clean = _re.sub(r'[^a-zA-Z0-9\s]', '', description.lower())
+        desc_words = set(desc_clean.split())
+        for word in desc_words:
+            w_key = f"tfidf_{word}"
+            if w_key in row_dict:
+                row_dict[w_key] = 0.3  # approximate TF-IDF weight (not binary 1.0)
 
-    input_df = pd.DataFrame([row_dict])[classifier.feature_names]
+        input_df = pd.DataFrame([row_dict])[classifier.feature_names]
 
-    # Predict with Random Forest
-    rf_model = classifier.models['Random Forest']
-    probs = rf_model.predict_proba(input_df)[0]
-    movie_prob = round(float(probs[1]) * 100, 2)
-    tv_prob = round(float(probs[0]) * 100, 2)
-    prediction = 'Movie' if movie_prob >= 50.0 else 'TV Show'
+        # Predict with Random Forest — use classes_ for correct index mapping
+        rf_model = classifier.models['Random Forest']
+        probs = rf_model.predict_proba(input_df)[0]
+        classes = list(rf_model.classes_)
+        movie_idx = classes.index(1) if 1 in classes else 1
+        tv_idx = classes.index(0) if 0 in classes else 0
+        movie_prob = round(float(probs[movie_idx]) * 100, 2)
+        tv_prob = round(float(probs[tv_idx]) * 100, 2)
+        prediction = 'Movie' if movie_prob >= 50.0 else 'TV Show'
 
-    return jsonify({
-        'prediction': prediction,
-        'movie_probability': movie_prob,
-        'tv_show_probability': tv_prob,
-        'confidence': max(movie_prob, tv_prob)
-    })
+        return jsonify({
+            'prediction': prediction,
+            'movie_probability': movie_prob,
+            'tv_show_probability': tv_prob,
+            'confidence': max(movie_prob, tv_prob)
+        })
+    except Exception as e:
+        return jsonify({'error': f'Prediction failed: {str(e)}'}), 500
 
 
 @app.route('/api/clusters')
@@ -234,10 +256,19 @@ def serve_report(filename):
     return send_from_directory(reports_dir, filename)
 
 
-# Initialize data at module import so Gunicorn / Flask CLI has it ready
-initialize_app_data()
+def _ensure_initialized():
+    """Lazy initialization — loads models on first request if not already loaded."""
+    if not DATA:
+        initialize_app_data()
+
+
+@app.before_request
+def before_request():
+    _ensure_initialized()
+
 
 if __name__ == '__main__':
+    initialize_app_data()
     port = int(os.environ.get('PORT', 5000))
     print(f"\n=======================================================")
     print(f">> Netflix ML Web App running at: http://127.0.0.1:{port}")

@@ -1,6 +1,6 @@
 cluster,archetype_name,title_count,pct_catalog,movie_pct,tv_show_pct,dominant_genres,primary_countries,sample_titles
-0,Global TV Dramas & Crime Series,2709,30.76,100.0,0.0,International Movies; Dramas; Comedies; Action & Adventure,India; Unknown; United Kingdom,Weeds on Fire; Paying Guests; Girl's Revenge
-1,"Kids, Animation & Family Entertainment",2900,32.93,100.0,0.0,Comedies; Dramas; Documentaries; Children & Family Movies,United States; Unknown; United Kingdom,Lee Su-geun: The Sense Coach; Bridget Christie: Stand Up for Her; Hazel Brugger: Tropical
-2,International Independent & Arthouse Cinema,2403,27.29,0.0,100.0,International TV Shows; TV Dramas; TV Comedies; Crime TV Shows,United States; Unknown; United Kingdom,Let's Fight Ghost; Power Rangers Super Samurai; Love 101
-3,Mainstream Hollywood Blockbusters & Comedies,538,6.11,96.8,3.2,Dramas; Comedies; International Movies; Action & Adventure,United States; India; United Kingdom,The Last Days of Chez Nous; Mobile Suit Gundam II: Soldiers of Sorrow; Kaalia
-4,"Documentaries, Docuseries & Cultural Stories",257,2.92,0.0,100.0,TV Comedies; TV Dramas; Kids' TV; International TV Shows,United States; United Kingdom; Canada,Home: Adventures with Tip & Oh; Star Trek: Voyager; The 100
+0,TV Comedies & TV Dramas (TV Series),257,2.92,0.0,100.0,TV Comedies; TV Dramas; Kids' TV; International TV Shows,United States; United Kingdom; Canada,Home: Adventures with Tip & Oh; Star Trek: Voyager; The 100
+1,Comedies & Dramas (Movies),2902,32.95,100.0,0.0,Comedies; Dramas; Documentaries; Children & Family Movies,United States; Unknown; United Kingdom,Ratchet and Clank; Term Life; Monster House
+2,India Dramas & Comedies (Movies),2697,30.62,100.0,0.0,International Movies; Dramas; Comedies; Action & Adventure,India; Unknown; United Kingdom,Close; A Fortunate Man; Kabir Singh
+3,Dramas & Comedies (Movies),548,6.22,96.9,3.1,Dramas; Comedies; International Movies; Action & Adventure,United States; India; United Kingdom,American Beauty; FTA; All Dogs Go to Heaven
+4,TV Dramas & TV Comedies (TV Series),2403,27.29,0.0,100.0,International TV Shows; TV Dramas; TV Comedies; Crime TV Shows,United States; Unknown; United Kingdom,Let's Fight Ghost; Power Rangers Super Samurai; Love 101

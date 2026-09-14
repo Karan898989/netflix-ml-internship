@@ -31,9 +31,10 @@ class NetflixRecommender:
             raw_df = clean_netflix_data()
             self.df = build_content_soup(raw_df)
         else:
-            self.df = df
+            self.df = df if 'content_soup' in df.columns else build_content_soup(df)
         
-        self.indices = pd.Series(self.df.index, index=self.df['title'].str.lower()).drop_duplicates()
+        self.indices = pd.Series(range(len(self.df)), index=self.df['title'].str.lower())
+        self.indices = self.indices[~self.indices.index.duplicated(keep='first')]
         self.tfidf = None
         self.tfidf_matrix = None
         self.cosine_sim = None
@@ -204,8 +205,11 @@ def main():
 
     recommender = NetflixRecommender()
     recs = recommender.get_recommendations(args.title, top_n=args.top_n)
-    print(f"\nRecommendations for '{args.title}':")
-    print(recs[['title', 'match_score_pct', 'type', 'listed_in']])
+    if recs.empty:
+        print(f"\nNo recommendations found for '{args.title}'.")
+    else:
+        print(f"\nRecommendations for '{args.title}':")
+        print(recs[['title', 'match_score_pct', 'type', 'listed_in']])
     recommender.evaluate_sample_benchmarks()
 
 

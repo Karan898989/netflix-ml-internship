@@ -26,7 +26,7 @@ from src.task6_analytics_engine import NetflixAnalyticsEngine
 def run_full_internship_pipeline():
     start_time = time.time()
     print("=" * 70)
-    print("AUSPIFY MACHINE LEARNING INTERNSHIP — FULL PIPELINE EXECUTION")
+    print("AUSPIFY MACHINE LEARNING INTERNSHIP -- FULL PIPELINE EXECUTION")
     print("=" * 70)
 
     # 0. Data Load & Sanity Verification
@@ -79,15 +79,19 @@ def run_full_internship_pipeline():
     print(f"ALL 4 TASKS SUCCESSFULLY EXECUTED IN {elapsed:.1f} SECONDS!")
     print("=" * 70)
     print("\nArtifacts Summary:")
+    screenshots_dir = os.path.join(PROJECT_ROOT, 'screenshots')
+    reports_dir = os.path.join(PROJECT_ROOT, 'reports')
     print("Screenshots Directory (screenshots/):")
-    for f in sorted(os.listdir('screenshots')):
-        size = os.path.getsize(os.path.join('screenshots', f)) / 1024
-        print(f"  - screenshots/{f} ({size:.1f} KB)")
+    if os.path.exists(screenshots_dir):
+        for f in sorted(os.listdir(screenshots_dir)):
+            size = os.path.getsize(os.path.join(screenshots_dir, f)) / 1024
+            print(f"  - screenshots/{f} ({size:.1f} KB)")
 
     print("\nReports Directory (reports/):")
-    for f in sorted(os.listdir('reports')):
-        size = os.path.getsize(os.path.join('reports', f)) / 1024
-        print(f"  - reports/{f} ({size:.1f} KB)")
+    if os.path.exists(reports_dir):
+        for f in sorted(os.listdir(reports_dir)):
+            size = os.path.getsize(os.path.join(reports_dir, f)) / 1024
+            print(f"  - reports/{f} ({size:.1f} KB)")
 
 
 if __name__ == '__main__':

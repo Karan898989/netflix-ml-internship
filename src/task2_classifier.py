@@ -25,7 +25,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import (
     accuracy_score, precision_score, recall_score, f1_score,
-    roc_auc_score, confusion_matrix, roc_curve, classification_report
+    roc_auc_score, confusion_matrix, roc_curve
 )
 
 from src.data_loader import clean_netflix_data
@@ -82,7 +82,7 @@ def prepare_classification_features(df):
 
     X = pd.concat(feature_dfs, axis=1)
     print(f"[Task 2] Feature matrix constructed: {X.shape[0]} rows, {X.shape[1]} features.")
-    return X, y, X.columns.tolist()
+    return X, y, X.columns.tolist(), scaler, tfidf
 
 
 class ContentTypeClassifier:
@@ -92,7 +92,7 @@ class ContentTypeClassifier:
         if df is None:
             df = clean_netflix_data()
         self.df = df
-        self.X, self.y, self.feature_names = prepare_classification_features(self.df)
+        self.X, self.y, self.feature_names, self.scaler, self.tfidf = prepare_classification_features(self.df)
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
             self.X, self.y, test_size=0.2, random_state=42, stratify=self.y
         )

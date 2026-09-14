@@ -67,7 +67,7 @@ function initRecommender() {
         const titles = await resp.json();
         if (titles.length > 0) {
           autocompleteList.innerHTML = titles
-            .map(t => `<div class="autocomplete-item" data-title="${t}">${t}</div>`)
+            .map(t => `<div class="autocomplete-item" data-title="${escapeHtml(t)}">${escapeHtml(t)}</div>`)
             .join('');
           autocompleteList.style.display = 'block';
 
@@ -216,13 +216,20 @@ function initClassifier() {
 
       const data = await resp.json();
 
-      // Update UI elements
       const badge = document.getElementById('pred-result-badge');
       const meterFill = document.getElementById('pred-meter-fill');
       const moviePct = document.getElementById('pred-movie-pct');
       const tvPct = document.getElementById('pred-tv-pct');
       const confText = document.getElementById('pred-confidence-text');
 
+      if (!resp.ok || data.error) {
+        badge.textContent = 'Error';
+        badge.style.background = '#ff5454';
+        confText.innerHTML = `<span style="color: #ff5454;">Prediction failed: ${escapeHtml(data.error || 'Unknown error')}</span>`;
+        return;
+      }
+
+      // Update UI elements
       badge.textContent = data.prediction;
       if (data.prediction === 'Movie') {
         badge.style.background = 'linear-gradient(135deg, #e50914, #ff5454)';
@@ -365,8 +372,8 @@ function renderLongitudinalTrendChart(yearly) {
   if (!ctx) return;
 
   const totalPerYear = yearly.years.map((_, i) => yearly.movies[i] + yearly.tv_shows[i]);
-  const movieShare = yearly.years.map((_, i) => totalPerYear[i] ? ((yearly.movies[i] / totalPerYear[i]) * 100).toFixed(1) : 0);
-  const tvShare = yearly.years.map((_, i) => totalPerYear[i] ? ((yearly.tv_shows[i] / totalPerYear[i]) * 100).toFixed(1) : 0);
+  const movieShare = yearly.years.map((_, i) => totalPerYear[i] ? parseFloat(((yearly.movies[i] / totalPerYear[i]) * 100).toFixed(1)) : 0);
+  const tvShare = yearly.years.map((_, i) => totalPerYear[i] ? parseFloat(((yearly.tv_shows[i] / totalPerYear[i]) * 100).toFixed(1)) : 0);
 
   new Chart(ctx, {
     type: 'line',

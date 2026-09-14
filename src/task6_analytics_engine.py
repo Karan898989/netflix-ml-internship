@@ -62,7 +62,7 @@ class NetflixAnalyticsEngine:
         self.df['release_era'] = self.df['release_year'].apply(assign_era)
 
         # Global reach proxy: multi-country production or international genre tag
-        self.df['is_international'] = self.df['listed_in'].str.contains('International', case=False) | (self.df['country'].str.contains(','))
+        self.df['is_international'] = self.df['listed_in'].str.contains('International', case=False, na=False) | self.df['country'].str.contains(',', na=False)
         self.df['target_global_appeal'] = self.df['is_international'].astype(int)
 
         # Catalog turnaround lag (years between release and addition to Netflix)
@@ -81,10 +81,10 @@ class NetflixAnalyticsEngine:
         # Feature preparation
         top_genres = ['Dramas', 'Comedies', 'Action & Adventure', 'Documentaries', 'Kids\' TV', 'Romantic Movies']
         for g in top_genres:
-            self.df[f'has_{g.lower().replace(" ", "_")}'] = self.df['listed_in'].str.contains(g, regex=False).astype(int)
+            self.df[f'has_{g.lower().replace(" ", "_")}'] = self.df['listed_in'].str.contains(g, regex=False, na=False).astype(int)
 
         X_cols = [f'has_{g.lower().replace(" ", "_")}' for g in top_genres] + ['release_year', 'addition_lag_years', 'cluster']
-        X = pd.get_dummies(self.df[X_cols], columns=['cluster'], drop_first=True)
+        X = pd.get_dummies(self.df[X_cols], columns=['cluster'], drop_first=True, dtype=int)
         y = self.df['target_global_appeal']
 
         scaler = StandardScaler()
@@ -178,7 +178,7 @@ class NetflixAnalyticsEngine:
 
         # 2. Executive Analytics Dashboard (4-panel figure)
         fig, axes = plt.subplots(2, 2, figsize=(16, 12))
-        sns.set_style("whitegrid")
+        sns.set_theme(style="whitegrid")
 
         # Panel A: Catalog Growth Over Time (2012-2021)
         yearly_type = self.df[(self.df['year_added'] >= 2012) & (self.df['year_added'] <= 2021)].groupby(['year_added', 'type']).size().unstack(fill_value=0)

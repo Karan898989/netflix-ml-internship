@@ -207,7 +207,7 @@ from src.task4_segmentation import ContentSegmenter
 
 print("Libraries imported successfully.")"""),
         nbf.v4.new_markdown_cell("""### 1. Determining Optimal Cluster Count ($k$)
-We evaluate inertia (Elbow method) and Silhouette Scores across $k \in [2, 8]$ to determine the most natural cluster partitioning.
+We evaluate inertia (Elbow method) and Silhouette Scores across $k \\in [2, 8]$ to determine the most natural cluster partitioning.
 """),
         nbf.v4.new_code_cell("""df = clean_netflix_data()
 segmenter = ContentSegmenter(df, optimal_k=5)

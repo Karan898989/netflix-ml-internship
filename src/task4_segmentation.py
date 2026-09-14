@@ -2,7 +2,7 @@
 Task 4: Netflix Content Segmentation
 Unsupervised clustering using K-Means to discover natural content segments and archetypes.
 Evaluates optimal k using Elbow method and Silhouette scores.
-Projects high-dimensional space into 2D using Principal Component Analysis (PCA) and t-SNE.
+Projects high-dimensional space into 2D using Principal Component Analysis (PCA).
 """
 
 import os
@@ -51,7 +51,7 @@ def prepare_clustering_features(df):
     # 3. Rating groupings
     def group_rating(r):
         r = str(r).upper()
-        if r in ['TV-Y', 'TV-Y7', 'G', 'TV-G', 'PG']:
+        if r in ['TV-Y', 'TV-Y7', 'G', 'TV-G', 'PG', 'TV-PG']:
             return 'Kids_Family'
         elif r in ['PG-13', 'TV-14']:
             return 'Teens_General'
@@ -143,18 +143,36 @@ class ContentSegmenter:
         self.df['pca_y'] = self.pca_2d[:, 1]
         print(f"[Task 4] Explained variance by 2 PCA components: {pca.explained_variance_ratio_.sum()*100:.2f}%")
 
+    @staticmethod
+    def _generate_archetype_name(cluster_id, movie_pct, top_genres, top_countries):
+        """Auto-generates a descriptive archetype name from actual cluster content."""
+        # Determine content type label
+        if movie_pct >= 90:
+            type_label = "Movies"
+        elif movie_pct <= 10:
+            type_label = "TV Series"
+        else:
+            type_label = "Mixed Content"
+
+        # Pick the most descriptive genre (skip overly generic ones)
+        generic_genres = {'International Movies', 'International TV Shows', 'TV Shows', 'Movies'}
+        descriptive_genres = [g for g in top_genres if g not in generic_genres]
+        if descriptive_genres:
+            genre_label = " & ".join(descriptive_genres[:2])
+        elif top_genres:
+            genre_label = " & ".join(top_genres[:2])
+        else:
+            genre_label = "General"
+
+        # Add regional flavor if top country is not US/Unknown
+        country = top_countries[0] if top_countries else "Unknown"
+        if country not in ("United States", "Unknown"):
+            return f"{country} {genre_label} ({type_label})"
+        return f"{genre_label} ({type_label})"
+
     def profile_clusters(self):
         """Generates detailed business archetype profiles for each cluster."""
         profiles = []
-        
-        # Human-interpretable archetype names based on characteristic dominant themes
-        archetype_names = {
-            0: "Global TV Dramas & Crime Series",
-            1: "Kids, Animation & Family Entertainment",
-            2: "International Independent & Arthouse Cinema",
-            3: "Mainstream Hollywood Blockbusters & Comedies",
-            4: "Documentaries, Docuseries & Cultural Stories"
-        }
 
         print("\n--- Task 4: Content Cluster Archetypes ---")
         for c in range(self.optimal_k):
@@ -174,7 +192,8 @@ class ContentSegmenter:
             # Examples
             examples = c_df['title'].sample(min(3, count), random_state=42).tolist()
 
-            archetype = archetype_names.get(c, f"Content Cluster {c}")
+            # Auto-generate archetype name from actual cluster characteristics
+            archetype = self._generate_archetype_name(c, movie_pct, top_genres, top_countries)
 
             print(f"\n[Cluster {c}] {archetype}")
             print(f"  Titles: {count:,} ({pct:.1f}% of catalog) | Movies: {movie_pct:.1f}% vs TV: {tv_pct:.1f}%")
